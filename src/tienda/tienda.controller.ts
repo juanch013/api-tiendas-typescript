@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Put , Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { TiendaService } from './tienda.service';
 import { CrearTiendaDto } from './dtos/crearTienda.dto';
 import { LoggedtUser } from 'src/user/decorators/loggedUser.decorator';
 import { Usuario } from 'src/models/Usuario.model';
 import { authGuard } from 'src/guards/auth.guard';
+import { ModificarTiendaDto } from './dtos/modificarTienda.dto';
 
 @Controller('tienda')
 @UseGuards(authGuard)
@@ -28,5 +29,10 @@ export class TiendaController {
     @Delete('/:id')
     async eliminar(@Param('id') id:string){
         return await this.tiendaSer.eliminar(Number(id))
+    }
+
+    @Put('/:id')
+    async modificar(@Param('id') id:string, @Body() body:ModificarTiendaDto, @LoggedtUser() user:Usuario){
+        return await this.tiendaSer.modificar(Number(id), body, user)
     }
 }

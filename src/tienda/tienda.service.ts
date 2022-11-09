@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundE
 import { Exclude } from "class-transformer";
 import { Tienda } from "src/models/Tienda.model";
 import { Usuario } from "src/models/Usuario.model";
+import { ModificarTiendaDto } from "./dtos/modificarTienda.dto";
 
 @Injectable()
 export class TiendaService{
@@ -122,6 +123,59 @@ export class TiendaService{
         } catch (error) {
          console.log(error);
          return new InternalServerErrorException('Server error')   
+        }
+    }
+
+    async modificar(id:number, body:ModificarTiendaDto, user:Usuario){
+
+        try {
+            let tienda = await Tienda.findByPk(id,
+                {
+                    include:[{
+                        model:Usuario,
+                        attributes:['email','id','rolId']
+                    }]
+                });
+
+            if(tienda == null){
+                return new NotFoundException('Tienda not found')
+            }
+
+            if(user.id != tienda.duenio.id){
+                return new ForbiddenException('No tiene permisos para realizar esta accion')
+            }
+            let nuevoDuenio = undefined;
+
+            if(body.duenioId != undefined){
+
+                nuevoDuenio = await Usuario.findByPk(body.duenioId);
+
+                if(nuevoDuenio == null){
+                    return new NotFoundException('El usuario que desea asignarle a la tienda no fue encontrado')
+                }
+
+                console.log(nuevoDuenio.dataValues);
+            }
+
+            let update = await Tienda.update({
+                nombre: body.nombre == undefined? tienda.nombre : body.nombre,
+                calle: body.calle == undefined? tienda.calle : body.calle,
+                nroPuerta: body.nroPuerta == undefined? tienda.nroPuerta : body.nroPuerta,
+                userId: body.duenioId == undefined? tienda.userId : body.duenioId
+            },{where:{id:id}})
+
+            return {
+                ok:true,
+                msg:"tienda actualizada correctamente",
+                data:update
+            }
+
+
+
+
+        } catch (error) {
+            console.log(error);
+            return new InternalServerErrorException("Server error")
         }
     }
 }
