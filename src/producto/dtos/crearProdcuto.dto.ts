@@ -1,6 +1,8 @@
-import{IsNumber, IsString} from 'class-validator'
+import{IsNumber, IsPositive, IsString} from 'class-validator'
 
 export class CrearProductoDto{
+    
+    @IsPositive()
     @IsNumber()
     precio:number
 
@@ -10,6 +12,6 @@ export class CrearProductoDto{
     @IsString()
     descripcion:string
 
-    // @IsNumber()
-    // tiendaId:number
+    @IsNumber()
+    tiendaId:number
 }

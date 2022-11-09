@@ -5,6 +5,7 @@ import { LoggedtUser } from 'src/user/decorators/loggedUser.decorator';
 import { Usuario } from 'src/models/Usuario.model';
 import { authGuard } from 'src/guards/auth.guard';
 import { ModificarTiendaDto } from './dtos/modificarTienda.dto';
+import { AgregarProductoDto } from './dtos/agregarProducto.dto';
 
 @Controller('tienda')
 @UseGuards(authGuard)
@@ -35,4 +36,10 @@ export class TiendaController {
     async modificar(@Param('id') id:string, @Body() body:ModificarTiendaDto, @LoggedtUser() user:Usuario){
         return await this.tiendaSer.modificar(Number(id), body, user)
     }
+
+    @Post('/producto')
+    async agregarProd(@Body() body:AgregarProductoDto){
+        return await this.tiendaSer.agregarProd(body.productoId, body.tiendaId)
+    }
+
 }

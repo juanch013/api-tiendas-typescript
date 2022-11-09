@@ -1,5 +1,7 @@
-import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { Exclude } from "class-transformer";
+import { Producto } from "src/models/Producto.model";
+import { productoTienda } from "src/models/productoTienda.model";
 import { Tienda } from "src/models/Tienda.model";
 import { Usuario } from "src/models/Usuario.model";
 import { ModificarTiendaDto } from "./dtos/modificarTienda.dto";
@@ -47,8 +49,12 @@ export class TiendaService{
                     {
                         model:Usuario,
                         attributes:['email','rolId','id']
+                    },
+                    {
+                        model:Producto,
+                        through:{attributes:[]}
                     }
-                ]
+                ],
             })
 
 
@@ -72,6 +78,10 @@ export class TiendaService{
                     {
                         model:Usuario,
                         attributes:['email','rolId','id']
+                    },
+                    {
+                        model:Producto,
+                        through:{attributes:[]}
                     }
                 ],
                 attributes:{
@@ -103,6 +113,10 @@ export class TiendaService{
                     {
                         model:Usuario,
                         attributes:['email','rolId','id']
+                    },
+                    {
+                        model:Producto,
+                        through:{attributes:[]}
                     }
                 ]
             });
@@ -163,19 +177,64 @@ export class TiendaService{
                 nroPuerta: body.nroPuerta == undefined? tienda.nroPuerta : body.nroPuerta,
                 userId: body.duenioId == undefined? tienda.userId : body.duenioId
             },{where:{id:id}})
-
-            return {
-                ok:true,
-                msg:"tienda actualizada correctamente",
-                data:update
+            
+            if(update[0] == 0){
+                return {
+                    ok:false,
+                    msg:"No se realizó ninguna modificacion",
+                    data:tienda
+                }
             }
 
+            let ret = await Tienda.findByPk(id,{
+                include:[
+                        {
+                            model:Usuario,
+                            attributes:['email','id','rolId']
+                        },
+                        {
+                            model:Producto,
+                            through:{attributes:[]}
+                        }
+                    ]
+            })
 
-
+            return {
+                    ok:true,
+                    msg:"Se modifico la tienda correctamente",
+                    data:ret
+                }
 
         } catch (error) {
             console.log(error);
             return new InternalServerErrorException("Server error")
+        }
+    }
+
+    async agregarProd(producto:number, tienda:number){
+        try {
+            let prod = await Producto.findByPk(producto);
+            let ti = await Tienda.findByPk(tienda);
+
+            if(ti == null || prod == null){
+                return new BadRequestException('Los identificadores de producto y/o tienda no son correctos')
+            }
+
+            let insert = await productoTienda.create({
+                tiendaId:ti.id,
+                productoId:prod.id
+            })
+
+            return {
+                ok:true,
+                msg:`El producto ${prod.nombre} ya se encuentra disponible en ${ti.nombre}`,
+                data:insert
+            }
+
+
+        } catch (error) {
+            console.log(error);
+            return new InternalServerErrorException("Srever error")
         }
     }
 }

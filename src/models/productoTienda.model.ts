@@ -8,6 +8,9 @@ export class productoTienda extends Model {
   @Column
   productoId: number;
 
+  @Column
+  cantidad:number
+
   @ForeignKey(() => Tienda)
   @Column
   tiendaId: number;
