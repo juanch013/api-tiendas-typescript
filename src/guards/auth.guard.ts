@@ -11,7 +11,7 @@ export class authGuard implements CanActivate{
     canActivate(context: ExecutionContext){
         try {
             const request = context.switchToHttp().getRequest();   
-            console.log("hola desde el guard");
+            console.log("hola desde el auth guard");
             
             let jwt = request.headers.authorization;
     

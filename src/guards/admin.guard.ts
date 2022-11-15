@@ -8,6 +8,7 @@ export class AdminGuard implements CanActivate{
     canActivate(context: ExecutionContext){
         try {
             let request = context.switchToHttp().getRequest()
+            console.log("hola from admin guard");
             let jwt = request.headers.authorization
             let payload = verify(jwt,process.env.SECRETKEY) as PayloadDto
     
