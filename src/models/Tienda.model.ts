@@ -1,7 +1,9 @@
 import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model , Table } from "sequelize-typescript";
 import { Producto } from "./Producto.model";
 import { productoTienda } from "./productoTienda.model";
+import { productoVenta } from "./productoVenta.model";
 import { Usuario } from "./Usuario.model";
+import { Venta } from "./Venta.model";
 
 
 @Table({timestamps:false})
@@ -45,4 +47,7 @@ export class Tienda extends Model{
 
     @BelongsTo(()=>Usuario)
     duenio:Usuario
+
+    @HasMany(()=>Venta)
+    ventas:Venta[]
 }

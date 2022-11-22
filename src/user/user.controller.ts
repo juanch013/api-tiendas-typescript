@@ -7,7 +7,7 @@ import { ModificarUserDto } from './dtos/modificarUser.dto';
 import { UserService } from './user.service';
 
 @Controller('usuario')
-@UseGuards(authGuard)
+
 export class UserController {
     constructor(private userSer:UserService){}
 
@@ -17,24 +17,28 @@ export class UserController {
     }
 
     @Get('/')
+    @UseGuards(authGuard)
     @UseGuards(AdminGuard)
     async listar(){
         return await this.userSer.listar();
     }
 
     @Get('/:id')
+    @UseGuards(authGuard)
     @UseGuards(AdminGuard)
     async detalle(@Param('id') id:string){
         return await this.userSer.detalle(Number(id));
     }
 
     @Delete('/:id')
+    @UseGuards(authGuard)
     @UseGuards(AdminGuard)
     async eliminar(@Param('id') id:string){
         return await this.userSer.eliminar(Number(id))
     }
 
     @Put('/:id')
+    @UseGuards(authGuard)
     @UseGuards(AdminGuard)
     async modificar(@Param('id') id:string, @Body() body:ModificarUserDto){
         return await this.userSer.mod(Number(id),body)

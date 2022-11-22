@@ -11,7 +11,7 @@ import { CrearProductoDto } from "./dtos/crearProdcuto.dto";
 @Injectable()
 export class ProductoService{
 
-    async crear(nombre:string, precio:number, descripcion:string, user:Usuario){
+    async crear(nombre:string, precio:number,descripcion:string, user:Usuario){
             
             let u = await Usuario.findByPk(user.id)
             if(u==null){

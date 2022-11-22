@@ -4,6 +4,7 @@ import { Producto } from "src/models/Producto.model";
 import { productoTienda } from "src/models/productoTienda.model";
 import { Tienda } from "src/models/Tienda.model";
 import { Usuario } from "src/models/Usuario.model";
+import { Venta } from "src/models/Venta.model";
 import { ModificarTiendaDto } from "./dtos/modificarTienda.dto";
 
 @Injectable()
@@ -53,6 +54,13 @@ export class TiendaService{
                     {
                         model:Producto,
                         through:{attributes:[]}
+                    },
+                    {
+                        model:Venta,
+                        include:[{
+                            model:Producto,
+                            through:{attributes:['cantidad']}
+                        }]
                     }
                 ],
             })
@@ -211,10 +219,14 @@ export class TiendaService{
         }
     }
 
-    async agregarProd(producto:number, tienda:number){
+    async agregarProd(producto:number, tienda:number, user:Usuario){
         try {
             let prod = await Producto.findByPk(producto);
             let ti = await Tienda.findByPk(tienda);
+
+            if(ti.duenio.id != user.id){
+                return new ForbiddenException("Solo el duenio puede agregar productos a su tienda")
+            }
 
             if(ti == null || prod == null){
                 return new BadRequestException('Los identificadores de producto y/o tienda no son correctos')

@@ -6,11 +6,13 @@ import { Usuario } from 'src/models/Usuario.model';
 import { authGuard } from 'src/guards/auth.guard';
 import { ModificarTiendaDto } from './dtos/modificarTienda.dto';
 import { AgregarProductoDto } from './dtos/agregarProducto.dto';
+import { AgregarVentaDto } from './dtos/agregarVenta.dto';
+import { VentasService } from './ventas.service';
 
 @Controller('tienda')
 @UseGuards(authGuard)
 export class TiendaController {
-    constructor(private tiendaSer:TiendaService){}
+    constructor(private tiendaSer:TiendaService,private ventaSer:VentasService){}
 
     @Post('/')
     async crear(@Body() body:CrearTiendaDto, @LoggedtUser() user:Usuario){
@@ -38,8 +40,13 @@ export class TiendaController {
     }
 
     @Post('/producto')
-    async agregarProd(@Body() body:AgregarProductoDto){
-        return await this.tiendaSer.agregarProd(body.productoId, body.tiendaId)
+    async agregarProd(@Body() body:AgregarProductoDto,@LoggedtUser() user:Usuario){
+        return await this.tiendaSer.agregarProd(body.productoId, body.tiendaId,user)
+    }
+
+    @Post('/:tiendaId/ventas')
+    async agregarVenta(@Param('tiendaId') tiendaId:number,@Body() body:AgregarVentaDto){
+        return await this.ventaSer.crear(tiendaId,body.usuarioId,body.prods);
     }
 
 }

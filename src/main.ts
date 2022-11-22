@@ -9,6 +9,9 @@ import {config} from 'dotenv'
 import { Producto } from './models/Producto.model';
 import { Tienda } from './models/Tienda.model';
 import { productoTienda } from './models/productoTienda.model';
+import { Venta } from './models/Venta.model';
+import { productoVenta } from './models/productoVenta.model';
+import {ValidationPipe} from '@nestjs/common'
 config()
 
 async function bootstrap() {
@@ -16,7 +19,7 @@ async function bootstrap() {
 
   const sequelize = new Sequelize('baseprueba','root','rootroot',{
     dialect:"mysql",
-    models: [Rol,Usuario,Producto,Tienda, productoTienda]
+    models: [Rol,Usuario,Producto,Tienda, productoTienda,Venta,productoVenta]
   });
 
   // initModels(sequelize);
@@ -24,8 +27,15 @@ async function bootstrap() {
   // sequelize.sync(
   //   {force:true}
   // )
-
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true
+  }));
+  
   await app.listen(3000);
+
+  
 }
+
+
 
 bootstrap();

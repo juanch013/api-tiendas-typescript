@@ -1,4 +1,4 @@
-import {IsNumber} from 'class-validator'
+import {IsNumber, isNotEmpty, IsNotEmpty} from 'class-validator'
 
 export class AgregarProductoDto{
 

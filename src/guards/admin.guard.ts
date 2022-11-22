@@ -1,6 +1,5 @@
 import { ExecutionContext,CanActivate } from "@nestjs/common";
 import {verify} from 'jsonwebtoken'
-import { Observable } from "rxjs";
 import { PayloadDto } from "src/user/dtos/payload.dto";
 
 

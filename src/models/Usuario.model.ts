@@ -1,6 +1,7 @@
 import { Table,Column, DataType,Model, BelongsTo, ForeignKey, HasMany } from "sequelize-typescript";
 import { Producto } from "./Producto.model";
 import { Rol } from "./Rol.model";
+import { Venta } from "./Venta.model";
 
 @Table({timestamps:false})
 export class Usuario extends Model{
@@ -39,5 +40,8 @@ export class Usuario extends Model{
 
     @HasMany(()=> Producto)
     productos:Producto[];
+
+    @HasMany(()=> Venta)
+    compras:Venta[];
 
 }
